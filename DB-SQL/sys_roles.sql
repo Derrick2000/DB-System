@@ -1,0 +1,3 @@
+INSERT INTO `sys_roles`(`id`, `name`, `note`, `createdTime`, `modifiedTime`, `createdUser`, `modifiedUser`) VALUES (47, 'Product Manager', 'Product Management', '2020-04-29 10:59:45', '2020-09-21 17:00:58', NULL, NULL);
+INSERT INTO `sys_roles`(`id`, `name`, `note`, `createdTime`, `modifiedTime`, `createdUser`, `modifiedUser`) VALUES (48, 'Level 3 Software Engineer', 'Type', '2020-04-29 11:02:01', '2020-09-19 16:06:41', NULL, NULL);
+INSERT INTO `sys_roles`(`id`, `name`, `note`, `createdTime`, `modifiedTime`, `createdUser`, `modifiedUser`) VALUES (49, 'Level 2 Software Engineer', 'Software Design', '2020-04-29 16:05:58', '2020-09-21 14:34:43', NULL, NULL);
