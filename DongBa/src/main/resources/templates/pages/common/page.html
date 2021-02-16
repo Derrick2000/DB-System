@@ -1,0 +1,116 @@
+<ul class="pagination pagination-sm no-margin pull-right">
+    <li><a class="first">First</a></li>
+	<li><a class="pre">Previous</a></li>
+	<li><a class="next">Next</a></li>
+	<li><a class="last">Last</a></li>
+	<li><a class="rowCount">Total Records(0)</a></li>
+	<li><a class="pageCount">Total Pages(0)</a></li>
+	<li><a class="pageCurrent">Current Page(1)</a></li>
+</ul>
+<script type="text/javascript">
+	function doSetPagination(page){
+		$(".rowCount").html("Total Records("+page.rowCount+")");
+    	$(".pageCount").html("Total Pages("+page.pageCount+")");
+    	$(".pageCurrent").html("Current Page("+page.pageCurrent+")");
+		$("#pageId").data("pageCurrent",page.pageCurrent);
+		$("#pageId").data("pageCount",page.pageCount);
+		
+	}
+	
+	$(function(){
+		$("#pageId").on("click",".first,.pre,.next,.last",doJumpToPage);
+		//$(".input-group-btn").on("click",".btn-search",doQueryObjects)
+		$(".input-group-btn").on("click",".btn-delete",doDeleteObjects)
+		$("#checkAll").change(doChangeTBodyCheckboxState);
+		$("#tbodyId").on("change","input:checkbox",doChangeTHeadCheckboxState)
+	})
+	
+	function doJumpToPage(){
+		var cls=$(this).prop("class");
+		var pageCurrent=$("#pageId").data("pageCurrent");
+		var pageCount=$("#pageId").data("pageCount");
+		if(cls=="first"){
+			pageCurrent=1;
+		}else if(cls=="pre"&&pageCurrent>1){
+			pageCurrent--;
+		}else if(cls=="next"&&pageCurrent<pageCount){
+			pageCurrent++;
+		}else if(cls=="last"){
+			pageCurrent=pageCount;
+		}else{
+			return;
+		}
+		
+		$("#pageId").data("pageCurrent",pageCurrent);
+		doGetObjects();
+	}
+	
+	
+//	function doQueryObjects(){
+//		$("#pageId").data("pageCurrent",1);
+//		doGetObjects();
+//	}
+	
+	function doDeleteObjects(){
+		var ids=doGetCheckedIds();
+		if(ids.length==0){
+			alert("Please at least choose one");
+			return;
+		}
+		var url="log/doDeleteObjects";
+		var params={"ids":ids.toString()};
+		console.log(params);
+		$.post(url,params,function(result){
+			if(result.state==1){
+				alert(result.message);
+				doRefreshAfterDeletion();
+			}else{
+				alert(result.message);
+			}
+		});
+	}
+	
+	
+	function doGetCheckedIds(){
+		var array=[];
+		$("#tbodyId input[type=checkbox]").each(function(){
+			if($(this).prop("checked")){
+				array.push($(this).val());
+			}
+		});
+		return array;
+	}
+	
+	function doChangeTBodyCheckboxState(){
+		let flag=$(this).prop("checked");//true or false
+		$("#tbodyId input[type='checkbox']").prop("checked",flag);
+	}
+	
+	function doChangeTHeadCheckboxState(){
+		var flag=true;
+		$("#tbodyId input[type='checkbox']").each(function(){
+			flag=flag&$(this).prop("checked")
+		});
+		$("#checkAll").prop("checked",flag);
+	}
+	
+	function doRefreshAfterDeletion(){
+		var pageCount=$("#pageId").data("pageCount");
+		var pageCurrent=$("#pageId").data("pageCurrent");
+		var checked=$("#checkAll").prop("checked");
+		if(pageCurrent==pageCount&&checked&&pageCurrent>1){
+			pageCurrent--;
+			$("#pageId").data("pageCurrent",pageCurrent);
+		}
+		doGetObjects();
+	}
+	
+</script>
+
+
+
+
+
+
+
+

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.sys.dao.SysMenuDao">
+	<select id="findObjects" resultType="map">
+		select c.*,(select p.name from sys_menus p where c.parentId=p.id) parentName
+		from sys_menus c
+	</select>
+	
+	<select id="getChildCount" parameterType="int" resultType="int">
+		select count(*) from sys_menus where parentId=#{id}
+	</select>
+	
+	<delete id="deleteObject">
+		delete from sys_menus where id=#{id}
+	</delete>
+	
+	<select id="findZtreeMenuNodes" resultType="com.cy.common.vo.Node">
+		select id,name,parentId from sys_menus
+	</select>
+	
+	<insert id="insertObject" parameterType="com.cy.sys.entity.SysMenu">
+		insert into sys_menus
+		(name,url,type,sort,note,parentId,permission,createdTime,modifiedTime,createdUser,modifiedUser)
+		values
+		(#{name},#{url},#{type},#{sort},#{note},#{parentId},
+		#{permission},now(),now(),#{createdUser},#{modifiedUser})
+	</insert>
+	
+	<update id="updateObject" parameterType="com.cy.sys.entity.SysMenu">
+		update sys_menus
+		set
+			name=#{name}
+			type=#{type}
+			sort=#{sort}
+			url=#{url}
+			parentId=#{parentId}
+			permission=#{permission}
+			modifiedUser=#{modifiedUser}
+			modifiedTime=now()
+		where id=#{id}
+	</update>
+	
+	<select id="findPermissions" resultType="string">
+		select permission from sys_menus where id in
+		<foreach collection="menuIds" open="(" close=")" separator="," item="item">
+			#{item}
+		</foreach>
+	</select>
+	
+	 <select id="findMenusByIds" 
+            resultMap="sysUserMenu">
+           select p.id,p.name,p.url,c.id cid,c.name cname,c.url curl
+           from sys_menus p join sys_menus c
+           on c.parentId=p.id
+           <where>
+           <foreach collection="menuIds"
+                    open="("
+                    close=")"
+                    separator="or"
+                    item="menuId">
+               c.id=#{menuId}
+           </foreach>
+           and p.parentId is null
+           </where>
+ 	</select>
+		
+	<resultMap type="com.cy.sys.pojo.SysUserMenu" id="sysUserMenu">
+       	<!-- 一级菜单映射 -->
+       	<id  property="id" column="id"/>
+       	<result property="name" column="name"/>
+       	<result property="url" column="url"/>
+       	<!-- 二级菜单映射 -->
+       	<collection property="childs" ofType="com.cy.sys.pojo.SysUserMenu">
+           	<id  property="id" column="cid"/>
+           	<result property="name" column="cname"/>
+           	<result property="url" column="curl"/>
+       	</collection>
+ 	</resultMap>
+	
+</mapper>

@@ -1,0 +1,120 @@
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box">
+			<div class="box-header">
+				<h3 class="box-title">Log Management</h3>
+				<div class="box-tools">
+					<div class="input-group input-group-sm" style="width: 350px;">
+						<input type="text" name="table_search" id="searchNameId"
+							class="form-control pull-right" placeholder="Username">
+
+						<div class="input-group-btn">
+							<button type="button" class="btn btn-default btn-search">
+                                <i class="fa fa-search"></i>
+							</button>
+							<button type="button" class="btn btn-default btn-delete">Delete</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /.box-header -->
+			<div class="box-body table-responsive no-padding">
+				<table class="table table-hover">
+					<thead>
+						<tr>
+						    <th><input type="checkbox" id="checkAll">Select all</th>
+							<th>Username</th>
+							<th>Action</th>
+							<th>Request Method</th>
+							<th>Request Parameter</th>
+							<th>IP</th>
+							<th>Execution Time</th>
+						</tr>
+					</thead>
+					<tbody id="tbodyId">
+					    <tr>
+					       <td colspan="7">Data is loading...</td>
+					    </tr>
+					</tbody>
+				</table>
+			</div>
+			<div id="pageId" class="box-footer clearfix" dm="100">
+			  
+			</div>
+			<!-- /.box-body -->
+		</div>
+		<!-- /.box -->
+	</div>
+</div>
+<script type="text/javascript">
+$(function(){
+	$("#pageId").load("doPageUI",function(){
+		doGetObjects();
+	});
+	$(".input-group-btn").on("click",".btn-search",doQueryObjects);
+});
+
+
+function doQueryObjects(){
+	$("#pageId").data("pageCurrent",1);
+	doGetObjects();
+}
+
+function doGetObjects(){
+	$("#checkAll").prop("checked",false);
+	let url="log/doFindPageObjects";
+	var pageCurrent=$("#pageId").data("pageCurrent");
+	if(!pageCurrent) pageCurrent=1;
+	var params={"pageCurrent":pageCurrent};
+	var username=$("#searchNameId").val();
+	if(username) params.username=username;
+	$.getJSON(url,params,function(result){
+		doHandleQueryResponseResult(result);
+	})
+}
+
+function doHandleQueryResponseResult(result){
+	if(result.state==1){//success
+		doSetTableBodyRows(result.data.records);
+		doSetPagination(result.data);
+	}else{//error
+		//alert(result.message);
+		doHandleQueryErrorResult(result.message);
+	}
+}
+
+function doHandleQueryErrorResult(message){
+	let tBody=$("#tbodyId");
+	tBody.html(message);
+	$(".rowCount").html(`Total Records(0)`);
+	$(".pageCount").html(`Total Pages(0)`);
+	$(".pageCurrent").html(`Current Page(1)`);
+	$("#pageId").removeData();	
+}
+
+function doSetTableBodyRows(records){
+	let tBody=$("#tbodyId");
+	tBody.empty();
+	records.forEach(item=>{
+		tBody.append(doCreateTr(item));
+	});
+}
+
+function doCreateTr(item){
+	return `<tr>
+				<td><input type='checkbox' value=${item.id} /></td>
+				<td>${item.username}</td>
+				<td>${item.operation}</td>
+				<td>${item.method}</td>
+				<td>${item.params}</td>
+				<td>${item.ip}</td>
+				<td>${item.time}</td>
+			</tr>`
+}
+</script>
+
+
+
+
+
+
