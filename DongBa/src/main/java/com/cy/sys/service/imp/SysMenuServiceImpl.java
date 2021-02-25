@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -26,6 +28,7 @@ public class SysMenuServiceImpl implements SysMenuService {
 	@Autowired
 	private SysUserRoleDao sysUserRoleDao;
 
+	@Cacheable(value="menuCache")
 	@Override
 	public List<Map<String, Object>> findObjects() {
 		List<Map<String,Object>> list = sysMenuDao.findObjects();
@@ -69,6 +72,7 @@ public class SysMenuServiceImpl implements SysMenuService {
 		return rows;
 	}
 
+	@CacheEvict(value="menuCache",allEntries=true)
 	@Override
 	public int updateObject(SysMenu entity) {
 		if(entity == null) {

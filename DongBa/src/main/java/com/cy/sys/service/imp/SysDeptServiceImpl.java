@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-
-
+import com.cy.common.annotation.ClearCache;
+import com.cy.common.annotation.RequiredCache;
 import com.cy.common.exception.ServiceException;
 import com.cy.common.vo.Node;
 import com.cy.sys.dao.SysDeptDao;
@@ -20,7 +20,7 @@ public class SysDeptServiceImpl implements SysDeptService {
 	@Autowired
 	private SysDeptDao sysDeptDao;
 	
-	
+	@RequiredCache
 	@Override
 	public List<Map<String, Object>> findObjects() {
 		List<Map<String, Object>> list=
@@ -37,7 +37,7 @@ public class SysDeptServiceImpl implements SysDeptService {
 		return list;
 	}
 	
-	
+	@ClearCache
 	@Override
 	public int updateObject(SysDept entity) {
 		//1.合法验证
@@ -57,7 +57,7 @@ public class SysDeptServiceImpl implements SysDeptService {
 		return rows;
 	}
 	
-	
+	@ClearCache
 	@Override
 	public int saveObject(SysDept entity) {
 		//1.合法验证
@@ -73,7 +73,7 @@ public class SysDeptServiceImpl implements SysDeptService {
 		return rows;
 	}
 	
-	
+	@ClearCache
 	@Override
 	public int deleteObject(Integer id) {
 		//1.合法性验证

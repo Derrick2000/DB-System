@@ -13,6 +13,18 @@ public class PageObject<T> implements Serializable {
 	private Integer rowCount = 0;
 	private Integer pageCount = 0;
 	private List<T> records;
+	
+	public PageObject(Integer pageCurrent, Integer pageSize, Integer rowCount, List<T> records) {
+		super();
+		this.pageCurrent = pageCurrent;
+		this.pageSize = pageSize;
+		this.rowCount = rowCount;
+		this.records = records;
+		this.pageCount = (rowCount-1)/pageSize+1;
+	}
+	public PageObject() {
+		super();
+	}
 	public Integer getPageCurrent() {
 		return pageCurrent;
 	}
@@ -46,16 +58,7 @@ public class PageObject<T> implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	public PageObject(Integer pageCurrent, Integer pageSize, Integer rowCount, List<T> records) {
-		super();
-		this.pageCurrent = pageCurrent;
-		this.pageSize = pageSize;
-		this.rowCount = rowCount;
-		this.records = records;
-	}
-	public PageObject() {
-		super();
-	}
+	
 	
 	
 	

@@ -8,7 +8,10 @@ import java.util.UUID;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.cy.common.annotation.RequiredLog;
 import com.cy.common.bo.PageObject;
 import com.cy.common.exception.ServiceException;
 import com.cy.common.utils.AssertUtils;
@@ -20,6 +23,10 @@ import com.cy.sys.service.SysUserService;
 import com.cy.sys.vo.SysUserDeptVo;
 import com.github.pagehelper.util.StringUtil;
 
+@Transactional(readOnly = false,
+			   rollbackFor = Exception.class,
+			   timeout = 60,
+			   isolation = Isolation.READ_COMMITTED)
 @Service
 public class SysUserServiceImpl implements SysUserService{
 
@@ -27,6 +34,9 @@ public class SysUserServiceImpl implements SysUserService{
 	private SysUserDao sysUserDao;
 	@Autowired
 	private SysUserRoleDao sysUserRoleDao;
+	
+	@Transactional(readOnly = true)
+	@RequiredLog(value="Search by page")
 	@Override
 	public PageObject<SysUserDeptVo> findPageObjects(String username, Integer pageCurrent) {
 		if(pageCurrent == null || pageCurrent < 1) {
@@ -60,7 +70,7 @@ public class SysUserServiceImpl implements SysUserService{
 		return rows;
 	}
 	
-	
+	@Transactional(readOnly = true)
 	@Override
 	public Map<String, Object> findObjectById(Integer id) {
 		AssertUtils.isArgValid(id==null||id<1, "Invalid id");
@@ -85,6 +95,9 @@ public class SysUserServiceImpl implements SysUserService{
 		sysUserRoleDao.insertObject(entity.getId(), roleIds);
 		return rows;
 	}
+	
+	@Transactional
+	@RequiredLog(value="Save the user")
 	@Override
 	public int saveObject(SysUser entity, Integer[] roleIds) {
 		AssertUtils.isArgValid(entity==null, "User cannot be null");
@@ -101,6 +114,9 @@ public class SysUserServiceImpl implements SysUserService{
 		sysUserRoleDao.insertObject(entity.getId(), roleIds);
 		return rows;
 	}
+	
+	@Transactional(rollbackFor = IllegalArgumentException.class)
+	@RequiredLog(value="Disable")
 	@Override
 	public int validById(Integer id, Integer valid) {
 		AssertUtils.isArgValid(id==null||id<1, "Invalid id");

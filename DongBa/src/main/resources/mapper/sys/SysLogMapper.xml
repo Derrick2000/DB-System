@@ -17,9 +17,15 @@
 	</select>
 	
 	<select id="findPageObjects" resultType="com.cy.sys.entity.SysLog">
-		select *
-		<include refid="queryWhereId"></include>
-		order by createdTime desc limit #{startIndex},#{pageSize}
+		select * from sys_logs
+		<where>
+			<if test="username!=null and username!=''">
+				username like concat("%",#{username},"%")
+			</if>
+		</where>
+		order by createdTime desc
+		<!-- <include refid="queryWhereId"></include>
+		order by createdTime desc limit #{startIndex},#{pageSize} -->
 	</select>
 	
 	
@@ -40,8 +46,10 @@
 	</delete>
 	
 	<insert id="insertObject">
-		insert into sys_logs(username,operation,method,params,time,ip,createdTime)
-		values (#{username},#{operation},#{method},#{params},#{time},#{ip},#{createdTime})
+		insert into sys_logs
+		(username,operation,method,params,time,ip,createdTime)
+		values 
+		(#{username},#{operation},#{method},#{params},#{time},#{ip},#{createdTime})
 	</insert>
 	
 </mapper>

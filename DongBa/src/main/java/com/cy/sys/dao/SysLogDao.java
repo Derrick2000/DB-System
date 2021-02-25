@@ -10,9 +10,7 @@ import com.cy.sys.entity.SysLog;
 @Mapper
 public interface SysLogDao {
 	int getRowCount(@Param("username") String username);
-	List<SysLog> findPageObjects(@Param("username")String username,
-								 @Param("startIndex")Integer startIndex,
-								 @Param("pageSize")Integer pageSize);
+	List<SysLog> findPageObjects(@Param("username")String username);
 	
 	int deleteObjects(@Param("ids")Integer...ids);
 	int insertObject(SysLog entity);

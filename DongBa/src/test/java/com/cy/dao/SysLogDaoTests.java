@@ -22,7 +22,7 @@ public class SysLogDaoTests {
 	
 	@Test
 	public void testFindPageObject() {
-		List<SysLog> list = syslogDao.findPageObjects("admin", 0, 3);
+		List<SysLog> list = syslogDao.findPageObjects("admin");
 		for(SysLog log:list) {
 			System.out.println(log);
 		}
